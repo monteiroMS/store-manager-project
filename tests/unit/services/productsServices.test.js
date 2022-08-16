@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const productsModel = require('../../../models/productsModel');
 const productsService = require('../../../services/productsService');
-const DB_MOCK = require('../mock');
+const { DB_MOCK, DB_INSERT_MOCK } = require('../mock');
 
 describe('CAMADA SERVICES', () => {
   describe('Testa a função "getAll"', () => {
@@ -80,6 +80,60 @@ describe('CAMADA SERVICES', () => {
         expect(product)
           .to.be.an('object')
           .and.to.have.property('message').to.be.equals('Product not found');
+      });
+    });
+  });
+
+  describe('Testa a função "createProduct"', () => {
+    describe('Caso esteja tudo certo', () => {
+      const [RESPONSE_MOCK] = DB_INSERT_MOCK;
+
+      before(() => {
+        sinon.stub(productsModel, 'createProduct').resolves(RESPONSE_MOCK.insertId);
+      });
+
+      after(() => {
+        productsModel.createProduct.restore();
+      });
+
+      it('Retorna um objeto contendo as chaves "id" e "name"', async () => {
+        const TEST_NAME = 'teste';
+
+        const returns = await productsService.createProduct(TEST_NAME);
+
+        const EXPECTED_RETURN = {
+          id: RESPONSE_MOCK.insertId,
+          name: TEST_NAME,
+        };
+
+        expect(returns).to.be.deep.equal(EXPECTED_RETURN);
+      });
+    });
+
+    describe('Caso ocorra um erro', () => {
+      const error = {
+        message: 'string',
+        code: 'string',
+      };
+
+      before(() => {
+        sinon.stub(productsModel, 'createProduct').resolves(error);
+      });
+
+      after(() => {
+        productsModel.createProduct.restore();
+      });
+
+      it('Retorna um objeto contendo as chaves "code", "message" e "errorCode"', async () => {
+        const returns = await productsService.createProduct(null);
+
+        const EXPECTED_RETURN = {
+          code: 500,
+          message: error.message,
+          errorCode: error.code,
+        };
+
+        expect(returns).to.be.deep.equal(EXPECTED_RETURN);
       });
     });
   });

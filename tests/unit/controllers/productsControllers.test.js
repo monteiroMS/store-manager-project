@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const productsController = require('../../../controllers/productsController');
 const productsService = require('../../../services/productsService');
-const DB_MOCK = require('../mock');
+const { DB_MOCK, DB_INSERT_MOCK } = require('../mock');
 
 describe('CAMADA CONTROLLERS', () => {
   describe('Testa a função "getAll"', () => {
@@ -101,6 +101,68 @@ describe('CAMADA CONTROLLERS', () => {
 
         expect(res.status.calledWith(404)).to.be.equal(true);
         expect(res.json.calledWith({ message: error.message })).to.be.equal(true);
+      });
+    });
+  });
+
+  describe('Testa a função "createProduct"', () => {
+    const req = {};
+    const res = {};
+
+    describe('Caso esteja tudo certo', () => {
+      const [INSERT_RETURN_MOCK] = DB_INSERT_MOCK;
+      const servicesReturn = { id: INSERT_RETURN_MOCK.insertId, name: 'teste' };
+
+      before(async () => {
+
+        sinon.stub(productsService, 'createProduct').resolves(servicesReturn);
+
+        req.body = { name: 'teste' };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns();
+      });
+
+      after(async () => {
+        productsService.createProduct.restore();
+      });
+
+      it('Deve enviar um objeto contendo as chaves "id" e "name", retornando o código 201', async () => {
+        const EXPECTED_JSON = {
+          id: INSERT_RETURN_MOCK.insertId,
+          name: servicesReturn.name,
+        };
+
+        await productsController.createProduct(req, res);
+
+        expect(res.status.calledWith(201)).to.be.equal(true);
+        expect(res.json.calledWith(EXPECTED_JSON)).to.be.equal(true);
+      });
+    });
+
+    describe('Caso ocorra um erro', () => {
+      const servicesReturn = { code: 500, message: 'test', errorCode: 'testCode' };
+
+      before(async () => {
+        sinon.stub(productsService, 'createProduct').resolves(servicesReturn);
+
+        req.body = { name: null };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns();
+      });
+
+      after(async () => {
+        productsService.createProduct.restore();
+      });
+
+      it('Deve enviar um objeto contendo a chave "message", retornando o código esperado', async () => {
+        const EXPECTED_JSON = {
+          message: servicesReturn.message,
+        };
+
+        await productsController.createProduct(req, res);
+
+        expect(res.status.calledWith(servicesReturn.code)).to.be.equal(true);
+        expect(res.json.calledWith(EXPECTED_JSON)).to.be.equal(true);
       });
     });
   });

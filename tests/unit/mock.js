@@ -13,4 +13,19 @@ const DB_MOCK = [
   },
 ];
 
-module.exports = DB_MOCK;
+const DB_INSERT_MOCK = [
+  {
+    fieldCount: 0,
+    affectedRows: 1,
+    insertId: 16,
+    info: '',
+    serverStatus: 2,
+    warningStatus: 0
+  },
+  undefined
+];
+
+module.exports = {
+  DB_MOCK,
+  DB_INSERT_MOCK,
+};
