@@ -38,8 +38,6 @@ const createProduct = async (name) => {
   }
 };
 
-createProduct('Teste');
-
 module.exports = {
   getAll,
   getById,
