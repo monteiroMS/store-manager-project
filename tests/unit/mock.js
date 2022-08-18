@@ -25,7 +25,19 @@ const DB_INSERT_MOCK = [
   undefined
 ];
 
+const NEW_SALE_REQ_BODY_MOCK = [
+  {
+    productId: 1,
+    quantity: 3,
+  },
+  {
+    productId: 3,
+    quantity: 6,
+  },
+];
+
 module.exports = {
   DB_MOCK,
   DB_INSERT_MOCK,
+  NEW_SALE_REQ_BODY_MOCK,
 };
