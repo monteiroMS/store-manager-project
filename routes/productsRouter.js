@@ -4,10 +4,9 @@ const productNameValidator = require('../middlewares/productNameValidator');
 
 const router = express.Router();
 
-router.get('/', productsController.getAll);
-
-router.get('/:id', productsController.getById);
-
-router.post('/', productNameValidator, productsController.createProduct);
+router
+  .get('/', productsController.getAll)
+  .get('/:id', productsController.getById)
+  .post('/', productNameValidator, productsController.createProduct);
 
 module.exports = router;
