@@ -7,6 +7,7 @@ const productDeleteValidator = require('../middlewares/productDeleteValidator');
 const router = express.Router();
 
 router
+  .get('/search', productsController.getAllByName)
   .get('/', productsController.getAll)
   .get('/:id', productsController.getById)
   .post('/', productNameValidator, productsController.createProduct)

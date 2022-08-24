@@ -5,6 +5,12 @@ const getAll = async () => {
   return products;
 };
 
+const getAllByName = async (name) => {
+  const products = await productsModel.getAll();
+  return products
+    .filter((product) => product.name.toLowerCase().includes(name.toLowerCase()));
+};
+
 const getById = async (id) => {
   const product = await productsModel.getById(id);
 
@@ -39,6 +45,7 @@ const deleteProduct = async (id) => {
 
 module.exports = {
   getAll,
+  getAllByName,
   getById,
   createProduct,
   updateProduct,
