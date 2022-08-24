@@ -14,6 +14,23 @@ const createSaleProducts = async (id, product) => {
   }
 };
 
+const updateSale = async ({ quantity, productId, saleId }) => {
+  try {
+    const [response] = await connection.execute(`
+      UPDATE StoreManager.sales_products
+      SET quantity = ?
+      WHERE product_id = ? AND sale_id = ?;
+    `, [quantity, productId, saleId]);
+
+    if (!response.affectedRows) throw new Error('Algo deu errado');
+
+    return 200;
+  } catch (error) {
+    return { message: error.message };
+  }
+};
+
 module.exports = {
   createSaleProducts,
+  updateSale,
 };

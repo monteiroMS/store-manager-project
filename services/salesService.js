@@ -30,13 +30,32 @@ const getSaleById = async (id) => {
 };
 
 const deleteSale = async (id) => {
-  const saleStatus = await salesModel.deleteSale(id);
+  const status = await salesModel.deleteSale(id);
 
-  if (saleStatus.message) {
-    return { code: 404, message: saleStatus.message };
+  if (status.message) {
+    return { code: 404, message: status.message };
   }
 
-  return 200;
+  return status;
+};
+
+const updateSale = async (saleId, products) => {
+  const sale = await salesModel.getSaleById(saleId);
+
+  if (sale.message) return { code: 404, message: sale.message };
+
+  await Promise.all(
+    products.map(({ productId, quantity }) => saleProductsModel.updateSale({
+      saleId,
+      productId,
+      quantity,
+    })),
+  );
+
+  return {
+    saleId,
+    itemsUpdated: products,
+  };
 };
 
 module.exports = {
@@ -44,4 +63,5 @@ module.exports = {
   getSales,
   getSaleById,
   deleteSale,
+  updateSale,
 };
