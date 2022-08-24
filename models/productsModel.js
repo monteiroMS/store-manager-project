@@ -38,8 +38,23 @@ const createProduct = async (name) => {
   }
 };
 
+const updateProduct = async (name, id) => {
+  try {
+    const [response] = await connection.execute(`
+      UPDATE StoreManager.products
+      SET name = ?
+      WHERE id = ?;
+    `, [name, id]);
+    if (!response.affectedRows) throw new Error('Product not found');
+    return 200;
+  } catch (error) {
+    return { message: error.message };
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   createProduct,
+  updateProduct,
 };
