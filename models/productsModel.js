@@ -52,9 +52,23 @@ const updateProduct = async (name, id) => {
   }
 };
 
+const deleteProduct = async (id) => {
+  try {
+    const [response] = await connection.execute(`
+      DELETE FROM StoreManager.products
+      WHERE id = ?
+    `, [id]);
+    if (!response.affectedRows) throw new Error('Product not found');
+    return 204;
+  } catch (error) {
+    return { message: error.message };
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   createProduct,
   updateProduct,
+  deleteProduct,
 };
