@@ -55,8 +55,22 @@ const getSaleById = async (id) => {
   }
 };
 
+const deleteSale = async (id) => {
+  try {
+    const [response] = await connection.execute(`
+      DELETE FROM StoreManager.sales
+      WHERE id = ?
+    `, [id]);
+    if (!response.affectedRows) throw new Error('Sale not found');
+    return 200;
+  } catch (error) {
+    return { message: error.message };
+  }
+};
+
 module.exports = {
   createSale,
   getSales,
   getSaleById,
+  deleteSale,
 };
